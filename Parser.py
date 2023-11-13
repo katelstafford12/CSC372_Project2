@@ -118,7 +118,38 @@ def execute_line(line):
 
 # Handles arithmetic in our language
 def perform_arithmetic(var, operand1, operator, operand2):
-    print("Aritmetic: Not yet implemented")
+    if operand1.isdigit():
+        val1 = int(operand1)
+    else:
+        if operand1 in variables.keys():
+            val1 = variables[operand1]
+        else:
+            print(f'Unknown Variable - {operand1}')
+            return
+    if operand2.isdigit():
+        val2 = int(operand2)
+    else:
+        if operand2 in variables.keys():
+            val2 = variables[operand2]
+        else:
+            print(f'Unknown Variable - {operand2}')
+            return
+    if not isinstance(val2, int) or not isinstance(val1, int):
+        print(f'Unsupported types for the arithmetic operator {operator}!')
+        return
+    if operator == "plus":
+        val = val1 + val2
+    elif operator == "divided by":
+        val = val1 / val2
+    elif operator == "times":
+        val = val1 * val2
+    elif operator == "minus":
+        val = val1 - val2
+    elif operator == "modulus":
+        val = val1 % val2
+    variables[var] = val
+    print(f'{var} has been assigned to {val}')
+    
 
 # Handles booleans in our language    
 def perform_boolean(var, operand1, operator, operand2):
@@ -126,11 +157,47 @@ def perform_boolean(var, operand1, operator, operand2):
 
 # Handles NOT in our language
 def perform_not(var, operand):
-    print("Not: Not yet implemented")
+    if operand in variables.keys():
+        val = variables[operand]
+    elif operand == 'no':
+        val = False
+    elif operand == "yes":
+        val = True
+    if val != True or val != False:
+        print("Unsupport operand type!")
+        return
+    variables[var] = not val
+    print(f'{var} has been assigned to {not val}')
 
 # Handles comparisons in our language
 def perform_comparison(var, operand1, operator, operand2):
-    print("Compare: Not yet implemented")
+    if operand1.isdigit():
+        val1 = int(operand1)
+    else:
+        if operand1 in variables.keys():
+            val1 = variables[operand1]
+        else:
+            print(f'Unknown Variable - {operand1}')
+            return
+    if operand2.isdigit():
+        val2 = int(operand2)
+    else:
+        if operand2 in variables.keys():
+            val2 = variables[operand2]
+        else:
+            print(f'Unknown Variable - {operand2}')
+            return
+    if not isinstance(val2, int) or not isinstance(val1, int):
+        print("Unsupported types for comparison operators!")
+        return
+    if operator == 'greater than':
+        val = val1 > val2
+    elif operator == 'less than':
+        val = val1 < val2
+    elif operator == 'equals':
+        val = val1 == val2
+    variables[var] = val
+    print(f'{var} assigned to {val}')
 
 # Handles conditionals in our language
 def perform_conditional(var, value, condition1, do1, condition2, do2):
@@ -180,6 +247,11 @@ B is 2!
 C is [A plus 1] plus [B plus 2]!
 """
 
+# program = """A is 25!
+# B is 32!
+# C is yes!
+# D is no!
+# C is B plus 21!"""
 lines = program.split("\n")
 for line in lines:
     execute_line(line.strip())
