@@ -98,7 +98,8 @@ def execute_line(line):
     if match:
         var1 = match.group(1)
         var2 = match.group(2)
-        print_value(var2)
+        var3 = match.group(3)
+        print_value(var3)
         return
 
     match = grouping_expression.match(line)
@@ -209,7 +210,10 @@ def perform_while_loop(var1, value1, var2, value2, condition, do_block):
 
 # Handles print statements in our language
 def print_value(var):
-    print("Print: Not yet implemented")
+    if var in variables:
+        print(f"{variables[var]}")
+    else:
+        print(f"Error: '{var}' does not exist")
 
 # Handles grouping in our language
 def perform_grouping(var, operand1, operand2, operator1, operand3, operator2, operand4):
