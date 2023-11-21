@@ -247,11 +247,11 @@ B is 2!
 C is [A plus 1] plus [B plus 2]!
 """
 
-# program = """A is 25!
-# B is 32!
-# C is yes!
-# D is no!
-# C is B plus 21!"""
+# Testing with the example programs:
+#file_path = 'Program1.py'
+#with open(file_path, 'r') as file:
+#    program = file.read()
+    
 lines = program.split("\n")
 for line in lines:
     execute_line(line.strip())
