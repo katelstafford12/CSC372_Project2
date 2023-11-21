@@ -5,11 +5,11 @@ int_declaration = re.compile("^([A-Z]) is (\d+)!$")
 str_declaration = re.compile("^([A-Z]) is \"(.*)\"!$")
 bool_declaration = re.compile("^([A-Z]) is (yes|no)!")
 arithmetic_expression = re.compile("^([A-Z]) is ([A-Z]|\d+) (plus|minus|times|divided by|modulus) ([A-Z]|\d+)!$")
-boolean_expression = re.compile("^[A-Z]\s+is\s+[A-Z]\s+[\/\\][\/\\]\s+[A-Z]\!") # This ones not working
+boolean_expression = re.compile(r"^([A-Z]) is ([A-Z]) (\\\/|\/\\) ([A-Z])!$") # Fixed! Will continue to test
 not_expression = re.compile("^([A-Z]) is opposite ([A-Z])!")
 comparison_expression = re.compile("^([A-Z]) is ([A-Z]|\d+) (greater than|less than|equals) ([A-Z]|\d+)!")
 conditional_statement = re.compile("^([A-Z]) is (\d+)! when (\(.*\)) do (\(.*\)) or when(\(.*\)) do (\(.*\))$")
-while_loop = re.compile("^([A-Z]) is (\d+)! ([A-Z]) is (\d+)! as long as (\(.*\)) do (\(.*\))$") # This ones not working
+while_loop = re.compile(r"^as long as \((.*)\) do \((.*)\)$") # Fixed! Will continue to test
 print_statement = re.compile("^(?:([A-Z]) is ([A-Z]|\d+|\".*\")! )?say ([A-Z]|\d+|\".*\")!")
 grouping_expression = re.compile("^([A-Z]) is ([A-Z]|\d+)! \[([A-Z]|\d+) (plus) ([A-Z]|\d+)\] plus \[([A-Z]|\d+) (plus) ([A-Z]|\d+)\]!") # This ones not working
 
@@ -85,13 +85,9 @@ def execute_line(line):
 
     match = while_loop.match(line)
     if match:
-        var1 = match.group(1)
-        value1 = int(match.group(2))
-        var2 = match.group(3)
-        value2 = int(match.group(4))
-        condition = match.group(5)
-        do_block = match.group(6)
-        perform_while_loop(var1, value1, var2, value2, condition, do_block)
+        condition = match.group(1)
+        do_block = match.group(2)
+        perform_while_loop(condition, do_block)
         return
 
     match = print_statement.match(line)
@@ -154,7 +150,25 @@ def perform_arithmetic(var, operand1, operator, operand2):
 
 # Handles booleans in our language    
 def perform_boolean(var, operand1, operator, operand2):
-   print("Boolean: Not yet implemented")
+   #fetch values
+   v1 = variables.get(operand1, False)
+   v2 = variables.get(operand2, False)
+
+   #Perform specific boolean operation
+   
+   #AND operation
+   if operator == '/\\':
+    result = v1 and v2
+    print(f'AND Operation: {var} has been assigned to {result}')
+   #OR operation
+   elif operator == '\\/':
+    result = v1 or v2
+    print(f'OR Operation: {var} has been assigned to {result}')
+
+   else:
+    print(f"Unsupported boolean operator: {operator}")
+    return
+
 
 # Handles NOT in our language
 def perform_not(var, operand):
@@ -164,8 +178,8 @@ def perform_not(var, operand):
         val = False
     elif operand == "yes":
         val = True
-    if val != True or val != False:
-        print("Unsupport operand type!")
+    if val not in [True,False]:
+        print("Unsupported operand type!")
         return
     variables[var] = not val
     print(f'{var} has been assigned to {not val}')
@@ -205,9 +219,32 @@ def perform_conditional(var, value, condition1, do1, condition2, do2):
     print("Conditional: Not yet implemented")
 
 # Handles while loops in our language
-def perform_while_loop(var1, value1, var2, value2, condition, do_block):
-    print("While loop: Not yet implemented")
+def perform_while_loop(condition, do_block):
+    #Parse condition
+    condition_operands = condition.split()
+    left_operand = condition_operands[0]
+    operator = condition_operands[1] + ' ' + condition_operands[2]
+    right_operand = condition_operands[3]
 
+    while evaluate_condition(left_operand,operator, right_operand):
+        execute_line(do_block)
+
+#Helper Function similar to perform_comparison but returns the result directly (Instead of storing in a variable). 
+def evaluate_condition(left, op, right):
+    v1 = variables[left] if left in variables else int(left)
+    v2 = variables[right] if right in variables else int(right)
+
+    #Evaluate condition
+    if op == "greater than":
+        return v1 > v2
+    elif op == "less than":
+        return v1 < v2
+    elif op == "equals":
+        return v1 == v2
+    else:
+        print(f"Unsupported operator: {op}")
+        return False
+    
 # Handles print statements in our language
 def print_value(var):
     if var in variables:
@@ -237,6 +274,7 @@ C is 4 modulus 2!
 C is A /\ B!
 C is A \/ B!
 C is opposite A!
+C is opposite D!
 C is 1 greater than 2!
 C is 1 less than 2!
 C is 1 equals 2!
