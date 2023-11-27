@@ -11,7 +11,7 @@ comparison_expression = re.compile("^([A-Z]) is ([A-Z]|\d+) (greater than|less t
 conditional_statement = re.compile("^([A-Z]) is (\d+)! when (\(.*\)) do (\(.*\)) or when(\(.*\)) do (\(.*\))$")
 while_loop = re.compile(r"^as long as \((.*)\) do \((.*)\)$") # Fixed! Will continue to test
 print_statement = re.compile("^(?:([A-Z]) is ([A-Z]|\d+|\".*\")! )?say ([A-Z]|\d+|\".*\")!")
-grouping_expression = re.compile("^([A-Z]) is ([A-Z]|\d+)! \[([A-Z]|\d+) (plus) ([A-Z]|\d+)\] plus \[([A-Z]|\d+) (plus) ([A-Z]|\d+)\]!") # This ones not working
+grouping_expression = re.compile("^([A-Z]) is \[([A-Z]|\d+) (plus) ([A-Z]|\d+)\] plus \[([A-Z]|\d+) (plus) ([A-Z]|\d+)\]!") # Fixed for now!
 
 variables = {}
 
@@ -104,8 +104,8 @@ def execute_line(line):
     if match:
         var = match.group(1)
         operand1 = match.group(2)
-        operand2 = match.group(3)
-        operator1 = match.group(4)
+        operator1  = match.group(3)
+        operand2 = match.group(4)
         operand3 = match.group(5)
         operator2 = match.group(6)
         operand4 = match.group(7)
@@ -146,6 +146,8 @@ def perform_arithmetic(var, operand1, operator, operand2):
         val = val1 - val2
     elif operator == "modulus":
         val = val1 % val2
+    if var == "temp":
+        return val
     variables[var] = val
     print(f'{var} has been assigned to {val}')
     
@@ -218,7 +220,22 @@ def perform_comparison(var, operand1, operator, operand2):
 
 # Handles conditionals in our language
 def perform_conditional(var, value, condition1, do1, condition2, do2):
-    print("Conditional: Not yet implemented")
+    variables[var] = value
+    condition_reg = re.compile("^([A-Z]|\d+) (greater than|less than|equals) ([A-Z]|\d+)!")
+    condition1 = "(X equals 0!)"
+
+    con1 = condition_reg.match(condition1.replace("(", "").replace(")", ""))
+    l = (con1.group(1))
+    op = con1.group(2)
+    r = con1.group(3)
+    if evaluate_condition(l,op, r):
+        execute_line(do1.replace("(", "").replace(")", ""))
+    con1 = condition_reg.match(condition2.replace("(", "").replace(")", ""))
+    l = (con1.group(1))
+    op = con1.group(2)
+    r = con1.group(3)
+    if evaluate_condition(l,op, r):
+        execute_line(do2.replace("(", "").replace(")", ""))
 
 # Handles while loops in our language
 def perform_while_loop(condition, do_block):
@@ -256,7 +273,11 @@ def print_value(var):
 
 # Handles grouping in our language
 def perform_grouping(var, operand1, operand2, operator1, operand3, operator2, operand4):
-    print("Grouping: Not yet implemented")
+    temp1 = perform_arithmetic("temp", operand1, operator1, operand2)
+    temp2 = perform_arithmetic("temp", operand3, operator2, operand4)
+    variables[var] = temp1 + temp2
+    print(f"{var} has been assigned to {temp1 + temp2}!")
+
 
 # Handles executions in our language
 def execute_block(block):
@@ -288,8 +309,7 @@ X is 2!
 say X!
 A is 1!
 B is 2!
-C is [A plus 1] plus [B plus 2]!
-"""
+C is [A plus 1] plus [B plus 2]!"""
 
 # Testing with the example programs:
 #file_path = 'Program1.py'
