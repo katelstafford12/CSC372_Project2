@@ -17,6 +17,8 @@ variables = {}
 
 # Determines if the line in the language matches any regex expressions above
 def execute_line(line):
+    if line == "":
+        return
     match = int_declaration.match(line)
     if match:
         var = match.group(1)
@@ -294,6 +296,12 @@ C is [A plus 1] plus [B plus 2]!
 #with open(file_path, 'r') as file:
 #    program = file.read()
     
+program = '''
+X is 5!
+
+X is X plus 4!
+'''
 lines = program.split("\n")
 for line in lines:
+    print(line)
     execute_line(line.strip())
