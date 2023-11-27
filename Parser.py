@@ -1,4 +1,12 @@
 import re
+import sys
+
+# For command line arguments
+if len(sys.argv) < 2:
+    print("Example Usage: python3 Parser.py ProgramFile.py")
+    sys.exit(1)
+
+file_path = sys.argv[1]
 
 # Regex expressions for our language
 int_declaration = re.compile("^([A-Z]) is (\d+)!$")
@@ -282,46 +290,13 @@ def perform_grouping(var, operand1, operand2, operator1, operand3, operator2, op
 # Handles executions in our language
 def execute_block(block):
     print("Execute: Not yet implemented")
+try:
+    with open(file_path, 'r') as file:
+        program = file.read()
+except FileNotFoundError:
+    print(f"Error: File '{file_path}' not found.")
+    sys.exit(1)
 
-# Example usage:
-program = """A is 25!
-B is "i am a string"!
-C is yes!
-D is no!
-C is A plus B!
-C is 2 plus 3!
-C is 3 minus 2!
-C is 3 times 2!
-C is 4 divided by 2!
-C is 4 modulus 2!
-C is A /\ B!
-C is A \/ B!
-C is opposite A!
-C is opposite D!
-C is 1 greater than 2!
-C is 1 less than 2!
-C is 1 equals 2!
-X is 0! when (X equals 0!) do (X is X plus 1!) or when(X equals 1!) do (X is X plus 1!)
-X is 2!
-Y is 0!
-as long as (X greater than Y) do (Y is Y plus 1!)
-X is 2!
-say X!
-A is 1!
-B is 2!
-C is [A plus 1] plus [B plus 2]!"""
-
-# Testing with the example programs:
-#file_path = 'Program1.py'
-#with open(file_path, 'r') as file:
-#    program = file.read()
-    
-program = '''
-X is 5!
-
-X is X plus 4!
-'''
 lines = program.split("\n")
 for line in lines:
-    print(line)
     execute_line(line.strip())
