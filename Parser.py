@@ -1,4 +1,12 @@
 import re
+import sys
+
+# For command line arguments
+if len(sys.argv) < 2:
+    print("Example Usage: python3 Parser.py ProgramFile.py")
+    sys.exit(1)
+
+file_path = sys.argv[1]
 
 # Regex expressions for our language
 int_declaration = re.compile("^([A-Z]) is (\d+)!$")
@@ -310,6 +318,13 @@ def perform_grouping(var, operand1, operand2, operator1, operand3, operator2, op
 # Handles executions in our language
 def execute_block(block):
     print("Execute: Not yet implemented")
+try:
+    with open(file_path, 'r') as file:
+        program = file.read()
+except FileNotFoundError:
+    print(f"Error: File '{file_path}' not found.")
+    sys.exit(1)
+
 
 # Example usage:
 program = """A is 25!
