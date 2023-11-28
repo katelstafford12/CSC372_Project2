@@ -79,7 +79,7 @@ def execute_line(line, int_mode, i=0):
     if match:
         var = match.group(1)
         operand = match.group(2)
-        perform_not(var, operand, int_mode)
+        perform_not(var, operand, int_mode, i)
         return
 
     match = comparison_expression.match(line)
@@ -373,7 +373,7 @@ from a file: ''').strip()
         interactive_mode()
     elif inp == 'r':
         file_path = input("Please enter file path: ")
-        file_path = 'invalid_3.txt'
+        # file_path = 'invalid_3.txt'
         with open(file_path, 'r') as file:
             program = file.read()
             lines = program.split("\n")
