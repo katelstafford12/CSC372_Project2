@@ -7,4 +7,5 @@ F is B minus 5!
 G is A times 3!
 H is A divided by 5!
 I is A modulus 7!
-
+say G!
+say I!

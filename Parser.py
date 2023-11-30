@@ -251,13 +251,11 @@ def perform_conditional(var, value, condition1, do1, condition2, do2, int_mode, 
     variables[var] = value
     condition_reg = re.compile("^([A-Z]|yes|no|\d+) (greater than|less than|equals) ([A-Z]|yes|no|\d+)!")
     con1 = condition_reg.match(condition1.replace("(", "").replace(")", ""))
-    print(condition1.replace("(", "").replace(")", ""))
     l = con1.group(1)
     op = con1.group(2)
     r = con1.group(3)
     if evaluate_condition(l,op, r):
         execute_line(do1.replace("(", "").replace(")", ""), int_mode,i)
-    print(condition2)
     con1 = condition_reg.match(condition2.replace("(", "").replace(")", ""))
     l = con1.group(1)
     op = con1.group(2)
@@ -266,7 +264,7 @@ def perform_conditional(var, value, condition1, do1, condition2, do2, int_mode, 
         execute_line(do2.replace("(", "").replace(")", ""), int_mode,i)
 
 # Handles while loops in our language
-def perform_while_loop(condition, do_block, int_mode):
+def perform_while_loop(condition, do_block, int_mode, i):
     #Parse condition
     condition_operands = condition.split()
     left_operand = condition_operands[0]
@@ -362,7 +360,6 @@ from a file: ''').strip()
         interactive_mode()
     elif inp == 'r':
         file_path = input("Please enter file path: ")
-        # file_path = 'invalid_3.txt'
         with open(file_path, 'r') as file:
             program = file.read()
             lines = program.split("\n")
@@ -371,6 +368,7 @@ from a file: ''').strip()
                 execute_line(line.strip(), False,i)
                 i += 1
             print("Finished Running!")
+            return
     else:
         print("Invalid Option, exiting ...")
         return
@@ -387,8 +385,9 @@ def interactive_mode():
 
 if len(sys.argv) < 2:
     main()
-
-file_path = sys.argv[1]
+    sys.exit(-1)
+else:
+    file_path = sys.argv[1]
 try:
     with open(file_path, 'r') as file:
         program = file.read()
