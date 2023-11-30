@@ -177,25 +177,24 @@ def perform_arithmetic(var, operand1, operator, operand2, int_mode, i):
 # Handles booleans in our language    
 def perform_boolean(var, operand1, operator, operand2, int_mode, i):
    #fetch values
-   v1 = variables.get(operand1, False)
-   v2 = variables.get(operand2, False)
+    v1 = variables.get(operand1, False)
+    v2 = variables.get(operand2, False)
 
-   #Perform specific boolean operation
+    #Perform specific boolean operation
    
-   #AND operation
-   if operator == '/\\':
-    result = v1 and v2
-    if int_mode:
-        print(f'AND Operation: {var} has been assigned to {result}')
-   #OR operation
-   elif operator == '\\/':
-    result = v1 or v2
+    #AND operation
+    if operator == '/\\':
+        result = v1 and v2
+    #OR operation
+    elif operator == '\\/':
+        result = v1 or v2
+    else:
+        print(f"Error on line - {i}")
+        print(f"Unsupported boolean operator: {operator}")
+        return
+    variables[var] = result
     if int_mode:
         print(f'OR Operation: {var} has been assigned to {result}')
-
-   else:
-    print(f"Error on line - {i}")
-    print(f"Unsupported boolean operator: {operator}")
     return
 
 
